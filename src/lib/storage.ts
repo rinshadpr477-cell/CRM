@@ -21,13 +21,28 @@ export function loadStoredProspects(): Prospect[] {
 
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    } else {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROSPECTS));
-      return INITIAL_PROSPECTS;
+      const valid = parsed.filter(
+        (p) =>
+          p &&
+          typeof p === 'object' &&
+          typeof p.id === 'string' &&
+          typeof p.companyName === 'string' &&
+          typeof p.status === 'string'
+      );
+      if (valid.length > 0) {
+        return valid;
+      }
     }
+    // If corrupted or empty array, restore valid initial seed
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROSPECTS));
+    return INITIAL_PROSPECTS;
   } catch (error) {
-    console.error('Failed to load prospects from localStorage, using seed data:', error);
+    console.error('Recovering corrupted localStorage with seed data:', error);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROSPECTS));
+    } catch {
+      // In case quota or private browsing blocks writing
+    }
     return INITIAL_PROSPECTS;
   }
 }
@@ -176,7 +191,11 @@ export function getAllRecentActivities(limit = 10): (ActivityEvent & { companyNa
 
 export function resetProspectsToSeed(): Prospect[] {
   if (isBrowser()) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROSPECTS));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_PROSPECTS));
+    } catch {
+      // safe fallback
+    }
   }
   return INITIAL_PROSPECTS;
 }

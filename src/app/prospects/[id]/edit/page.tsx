@@ -73,8 +73,9 @@ function EditProspectContent() {
         </div>
       </div>
 
-      {/* Form Card */}
+      {/* Form Card with key to reset state if prospect changes */}
       <ProspectForm
+        key={prospect.id}
         initialData={prospect}
         mode="edit"
         onSubmit={async (data) => {

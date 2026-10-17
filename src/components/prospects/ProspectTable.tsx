@@ -47,6 +47,13 @@ export function ProspectTable({
   const [prospectToDelete, setProspectToDelete] = useState<Prospect | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Reset page to 1 when search or filters change
+  const [prevFilterCount, setPrevFilterCount] = useState(prospects.length);
+  if (prevFilterCount !== prospects.length) {
+    setPrevFilterCount(prospects.length);
+    setCurrentPage(1);
+  }
+
   // Sorting
   const sortedProspects = useMemo(() => {
     const list = [...prospects];
@@ -82,9 +89,6 @@ export function ProspectTable({
 
   // Auto-adjust page if current page exceeds total pages after deletion
   const validCurrentPage = Math.max(1, Math.min(currentPage, totalPages || 1));
-  if (validCurrentPage !== currentPage && totalPages > 0) {
-    setCurrentPage(validCurrentPage);
-  }
 
   const paginatedProspects = useMemo(() => {
     const start = (validCurrentPage - 1) * ITEMS_PER_PAGE;
@@ -106,6 +110,13 @@ export function ProspectTable({
     });
   };
 
+  const handleSortKeyDown = (e: React.KeyboardEvent, field: SortField) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleSort(field);
+    }
+  };
+
   const getSortIcon = (field: SortField) => {
     if (sortConfig.field !== field) {
       return <ArrowUpDown className="w-3.5 h-3.5 text-slate-400 opacity-60" />;
@@ -123,6 +134,11 @@ export function ProspectTable({
     await onDelete(prospectToDelete.id);
     setIsDeleting(false);
     setProspectToDelete(null);
+
+    // If deleting the last item on current page, decrement page
+    if (paginatedProspects.length === 1 && validCurrentPage > 1) {
+      setCurrentPage(validCurrentPage - 1);
+    }
   };
 
   if (prospects.length === 0) {
@@ -149,8 +165,12 @@ export function ProspectTable({
           <thead>
             <tr className="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider select-none">
               <th
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortConfig.field === 'companyName' ? (sortConfig.order === 'asc' ? 'ascending' : 'descending') : 'none'}
                 onClick={() => handleSort('companyName')}
-                className="py-3.5 px-6 cursor-pointer hover:bg-slate-100/70 transition-colors"
+                onKeyDown={(e) => handleSortKeyDown(e, 'companyName')}
+                className="py-3.5 px-6 cursor-pointer hover:bg-slate-100/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004e9f]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Company</span>
@@ -158,8 +178,12 @@ export function ProspectTable({
                 </div>
               </th>
               <th
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortConfig.field === 'industry' ? (sortConfig.order === 'asc' ? 'ascending' : 'descending') : 'none'}
                 onClick={() => handleSort('industry')}
-                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors hidden md:table-cell"
+                onKeyDown={(e) => handleSortKeyDown(e, 'industry')}
+                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors hidden md:table-cell focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004e9f]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Industry</span>
@@ -169,8 +193,12 @@ export function ProspectTable({
               <th className="py-3.5 px-4 hidden lg:table-cell">Country</th>
               <th className="py-3.5 px-4 hidden sm:table-cell">Assigned Rep</th>
               <th
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortConfig.field === 'annualRevenue' ? (sortConfig.order === 'asc' ? 'ascending' : 'descending') : 'none'}
                 onClick={() => handleSort('annualRevenue')}
-                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors text-right"
+                onKeyDown={(e) => handleSortKeyDown(e, 'annualRevenue')}
+                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004e9f]"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Revenue</span>
@@ -178,8 +206,12 @@ export function ProspectTable({
                 </div>
               </th>
               <th
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortConfig.field === 'employeeCount' ? (sortConfig.order === 'asc' ? 'ascending' : 'descending') : 'none'}
                 onClick={() => handleSort('employeeCount')}
-                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors text-right hidden xl:table-cell"
+                onKeyDown={(e) => handleSortKeyDown(e, 'employeeCount')}
+                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors text-right hidden xl:table-cell focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004e9f]"
               >
                 <div className="flex items-center justify-end gap-1.5">
                   <span>Employees</span>
@@ -187,8 +219,12 @@ export function ProspectTable({
                 </div>
               </th>
               <th
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortConfig.field === 'status' ? (sortConfig.order === 'asc' ? 'ascending' : 'descending') : 'none'}
                 onClick={() => handleSort('status')}
-                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors"
+                onKeyDown={(e) => handleSortKeyDown(e, 'status')}
+                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004e9f]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Status</span>
@@ -196,8 +232,12 @@ export function ProspectTable({
                 </div>
               </th>
               <th
+                tabIndex={0}
+                role="columnheader"
+                aria-sort={sortConfig.field === 'updatedAt' ? (sortConfig.order === 'asc' ? 'ascending' : 'descending') : 'none'}
                 onClick={() => handleSort('updatedAt')}
-                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors hidden lg:table-cell"
+                onKeyDown={(e) => handleSortKeyDown(e, 'updatedAt')}
+                className="py-3.5 px-4 cursor-pointer hover:bg-slate-100/70 transition-colors hidden lg:table-cell focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#004e9f]"
               >
                 <div className="flex items-center gap-1.5">
                   <span>Updated</span>
@@ -219,10 +259,11 @@ export function ProspectTable({
                     <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 group-hover:text-[#004e9f] transition-colors">
                       <Building2 className="w-4 h-4" />
                     </div>
-                    <div className="min-w-0">
+                    <div className="min-w-0 max-w-[220px] sm:max-w-xs">
                       <Link
                         href={`/prospects/${prospect.id}`}
-                        className="font-semibold text-slate-900 hover:text-[#004e9f] hover:underline line-clamp-1"
+                        className="font-semibold text-slate-900 hover:text-[#004e9f] hover:underline block truncate break-words"
+                        title={prospect.companyName}
                       >
                         {prospect.companyName}
                       </Link>
@@ -281,7 +322,7 @@ export function ProspectTable({
                   <div className="flex items-center justify-end gap-1">
                     <Link
                       href={`/prospects/${prospect.id}`}
-                      className="p-1.5 text-slate-500 hover:text-[#004e9f] hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-[#004e9f] hover:bg-blue-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004e9f]"
                       title="View Details"
                       aria-label={`View ${prospect.companyName}`}
                     >
@@ -289,7 +330,7 @@ export function ProspectTable({
                     </Link>
                     <Link
                       href={`/prospects/${prospect.id}/edit`}
-                      className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
                       title="Edit Prospect"
                       aria-label={`Edit ${prospect.companyName}`}
                     >
@@ -297,7 +338,7 @@ export function ProspectTable({
                     </Link>
                     <button
                       onClick={() => setProspectToDelete(prospect)}
-                      className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
                       title="Delete Prospect"
                       aria-label={`Delete ${prospect.companyName}`}
                     >

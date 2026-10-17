@@ -120,6 +120,7 @@ export function ProspectForm({ initialData, mode, onSubmit }: ProspectFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Guard against rapid duplicate clicks
     if (!validate()) return;
 
     try {
@@ -465,6 +466,7 @@ export function ProspectForm({ initialData, mode, onSubmit }: ProspectFormProps)
           type="submit"
           variant="primary"
           size="lg"
+          disabled={isSubmitting}
           isLoading={isSubmitting}
           leftIcon={<Save className="w-4 h-4" />}
         >
