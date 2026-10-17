@@ -1,69 +1,159 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React from 'react';
+import Link from 'next/link';
+import {
+  Users,
+  UserPlus,
+  CheckCircle2,
+  XCircle,
+  Plus,
+  ArrowUpRight,
+} from 'lucide-react';
+import { useProspects } from '@/context/ProspectContext';
+import { Button } from '@/components/ui/Button';
+import { MetricCard } from '@/components/dashboard/MetricCard';
+import { ProspectActivityChart } from '@/components/dashboard/ProspectActivityChart';
+import { LeadQualificationChart } from '@/components/dashboard/LeadQualificationChart';
+import { RecentProspectsTable } from '@/components/dashboard/RecentProspectsTable';
+import { RecentActivityFeed } from '@/components/dashboard/RecentActivityFeed';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { formatCurrency } from '@/lib/utils';
+
+export default function DashboardPage() {
+  const { prospects, isLoaded, metrics } = useProspects();
+
+  if (!isLoaded) {
+    return (
+      <div className="space-y-8 animate-pulse">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-10 w-48" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-32 w-full rounded-2xl" />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-80 lg:col-span-2 rounded-2xl" />
+          <Skeleton className="h-80 rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div className="space-y-8 pb-10">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Dashboard
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-1 text-sm text-slate-500">
+            Track your prospects and monitor lead performance.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="flex items-center gap-3">
+          <Link href="/prospects">
+            <Button variant="outline" size="md" rightIcon={<ArrowUpRight className="w-4 h-4" />}>
+              All Prospects
+            </Button>
+          </Link>
+          <Link href="/prospects/new">
+            <Button variant="primary" size="md" leftIcon={<Plus className="w-4 h-4" />}>
+              Add Prospect
+            </Button>
+          </Link>
         </div>
-      </main>
+      </div>
+
+      {/* KPI Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <MetricCard
+          title="Total Prospects"
+          value={metrics.totalProspects}
+          subtitle="All active pipeline accounts"
+          icon={Users}
+          iconBgColor="bg-blue-50"
+          iconTextColor="text-[#004e9f]"
+          trend={{
+            value: `${formatCurrency(metrics.totalPipelineValue)} val`,
+            isPositive: true,
+            label: 'Total estimated pipeline',
+          }}
+        />
+
+        <MetricCard
+          title="New Prospects"
+          value={metrics.newProspects}
+          subtitle="Awaiting initial discovery"
+          icon={UserPlus}
+          iconBgColor="bg-sky-50"
+          iconTextColor="text-sky-600"
+          trend={{
+            value: `${metrics.totalProspects > 0 ? Math.round((metrics.newProspects / metrics.totalProspects) * 100) : 0}% of total`,
+            isPositive: null,
+            label: 'Share of total leads',
+          }}
+        />
+
+        <MetricCard
+          title="Qualified Leads"
+          value={metrics.qualifiedLeads}
+          subtitle="Ready for technical demo / RFP"
+          icon={CheckCircle2}
+          iconBgColor="bg-emerald-50"
+          iconTextColor="text-[#34A853]"
+          trend={{
+            value: `${metrics.conversionRate}% qualification`,
+            isPositive: true,
+            label: 'Lead qualification rate',
+          }}
+        />
+
+        <MetricCard
+          title="Unqualified Leads"
+          value={metrics.unqualifiedLeads}
+          subtitle="Out of budget or timeline"
+          icon={XCircle}
+          iconBgColor="bg-rose-50"
+          iconTextColor="text-rose-600"
+          trend={{
+            value: `${metrics.totalProspects > 0 ? Math.round((metrics.unqualifiedLeads / metrics.totalProspects) * 100) : 0}% archived`,
+            isPositive: false,
+            label: 'Disqualified rate',
+          }}
+        />
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Activity Area Chart (2 Columns on large screens) */}
+        <div className="lg:col-span-2">
+          <ProspectActivityChart prospects={prospects} />
+        </div>
+
+        {/* Lead Qualification Donut Chart (1 Column) */}
+        <div>
+          <LeadQualificationChart prospects={prospects} />
+        </div>
+      </div>
+
+      {/* Bottom Grid: Recent Prospects Table + Recent Activity Feed */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Prospects Table (2 Columns) */}
+        <div className="lg:col-span-2">
+          <RecentProspectsTable prospects={prospects} />
+        </div>
+
+        {/* Activity Feed (1 Column) */}
+        <div>
+          <RecentActivityFeed prospects={prospects} />
+        </div>
+      </div>
     </div>
   );
 }
