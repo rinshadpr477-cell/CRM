@@ -48,7 +48,7 @@ function EditProspectContent() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-16">
+    <div className="max-w-4xl mx-auto space-y-6 pb-28">
       {/* Back link & Header */}
       <div>
         <Link

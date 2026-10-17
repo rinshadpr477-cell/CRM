@@ -38,17 +38,19 @@ export function ConfirmDialog({
     }
 
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('modal-open');
       window.addEventListener('keydown', handleKeyDown);
       setTimeout(() => {
         confirmButtonRef.current?.focus();
       }, 50);
     } else {
-      document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
     }
 
     return () => {
-      document.body.style.overflow = '';
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, isLoading, onCancel]);
