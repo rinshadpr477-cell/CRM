@@ -1,4 +1,4 @@
-# Prospect CRM — B2B Lead Management & Pipeline Analytics Dashboard
+# Prospect CRM — B2B Lead Management & Pipeline Analytics Dashboard ( https://crm-eosin-rho.vercel.app/ )
 
 A modern, responsive, production-quality SaaS CRM application built with **Next.js (App Router)**, **React 19**, **TypeScript**, **Tailwind CSS**, **Lucide React**, and **Recharts**.
 
@@ -6,7 +6,7 @@ Prospect CRM is designed specifically for enterprise B2B sales teams to track pr
 
 ---
 
-## 🚀 Installation & Execution
+##  Installation & Execution
 
 ### 1. Prerequisites
 - **Node.js**: v18.18+ or v20+ (tested on Node v20.20.2)
@@ -39,7 +39,7 @@ npm run start
 
 ---
 
-## 🎨 Design Decisions & Component Architecture
+## Design Decisions & Component Architecture
 
 ### 1. Visual Direction & Design Decisions
 - **Enterprise Visual Harmony**: The design uses a tailored palette featuring a fixed dark desktop sidebar (`bg-slate-900`, `text-slate-300`), a warm canvas (`bg-[#f9f9ff]`), and clean white card surfaces (`border-slate-200/80`, `rounded-2xl`).
@@ -55,7 +55,7 @@ npm run start
 
 ---
 
-## 🧭 Application Routes
+##  Application Routes
 
 | Route | Description | Key Features |
 | :--- | :--- | :--- |
@@ -67,7 +67,7 @@ npm run start
 
 ---
 
-## 💾 Data Model Schema (`Prospect`)
+##  Data Model Schema (`Prospect`)
 
 All prospects are stored in client-side `localStorage` under the key `'prospect_crm_records_v1'`.
 
@@ -95,7 +95,7 @@ export interface Prospect {
 
 ---
 
-## 📸 Showcase Screenshots & Artifacts
+##  Showcase Screenshots & Artifacts
 
 High-resolution screenshots demonstrating the application across desktop and mobile viewports are available in the artifact workspace:
 
@@ -108,7 +108,7 @@ High-resolution screenshots demonstrating the application across desktop and mob
 
 ---
 
-## 🧪 Quality Assurance & Edge Case Verification
+##  Quality Assurance & Edge Case Verification
 
 The application has been verified against all edge cases:
 
@@ -122,8 +122,11 @@ The application has been verified against all edge cases:
 
 ---
 
-## 👤 User Identity
+##  User Identity
 
 - **Active User**: Alex Morgan
 - **Role**: CRM Administrator
 - **Platform**: Prospect CRM Enterprise Hub
+
+  <img width="1837" height="1062" alt="image" src="https://github.com/user-attachments/assets/f06cbc27-659c-4410-831d-f42c9d0c618b" />
+
